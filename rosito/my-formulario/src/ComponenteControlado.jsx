@@ -1,58 +1,70 @@
 import { useState } from "react";
 function ComponenteControlado() {
-    // Estado para armazenar os valores dos campos
-    const [formData, setFormData] = useState({ nome: "", email: "", });
-    // Estado para armazenar os erros de validação
-    const [errors, setErrors] = useState({});
+    // Estado que armazena os valores do formulário
+    const [formData, setFormData] = useState({
+        linguagemFavorita: "",
+        aceitaTermos: false,
+        genero: "",
+    });
     // Função para lidar com mudanças nos inputs
     const handleChange = (event) => {
-        const { name, value } = event.target;
+        const { name, value, type, checked } = event.target;
+        // Se o tipo for "checkbox", usamos 'checked' para o valor
+        const valor = type === "checkbox" ? checked : value;
         setFormData((prevData) => ({
             ...prevData,
-            [name]: value,
+            [name]: valor, // Atualiza o campo correto no estado
         }));
     };
     // Função para lidar com o envio do formulário
     const handleSubmit = (event) => {
         event.preventDefault();
-        // Valida os campos
-        const newErrors = {};
-        if (!formData.nome) {
-            newErrors.nome = "O campo Nome é obrigatório";
-        }
-        if (!formData.email) {
-            newErrors.email = "O campo Email é obrigatório";
-        } else if (!formData.email.includes("@")) {
-            newErrors.email = "Por favor, insira um email válido";
-        }
-        // Se houver erros, atualize o estado e não submeta o formulário
-        if (Object.keys(newErrors).length > 0) {
-            setErrors(newErrors);
-        } else {
-            // Se não houver erros, envie o formulário
-            alert(`Nome: ${formData.nome}\nEmail: ${formData.email}`);
-            setErrors({});
-            setFormData({ nome: "", email: "" }); // Limpa o formulário após o envio
-        }
+        alert(
+            `Linguagem favorita: ${formData.linguagemFavorita}\nGênero: ${formData.genero
+            }\nAceita os termos: ${formData.aceitaTermos ? "Sim" : "Não"}`
+        );
     };
     return (
         <form onSubmit={handleSubmit}>
+            {/* Select */}
             <div>
                 <label>
-                    Nome:
-                    <input type="text" name="nome" value={formData.nome} onChange={handleChange} />
+                    Linguagem favorita:
+                    <select name="linguagemFavorita" value={formData.linguagemFavorita}
+                        onChange={handleChange}>
+                        <option value="">Selecione uma linguagem</option>
+                        <option value="JavaScript">JavaScript</option>
+                        <option value="Python">Python</option>
+                        <option value="Java">Java</option>
+                    </select>
                 </label>
-                {errors.nome && <p style={{ color: "red" }}>{errors.nome}</p>}{" "}
-                {/* Exibe erro se houver */}
             </div>
+            {/* Radio Buttons */}
+            <div>
+                <p>Gênero:</p>
+                <label>
+                    <input type="radio" name="genero" value="Masculino"
+                        checked={formData.genero === "Masculino"} onChange={handleChange} />
+                    Masculino
+                </label>
+                <label>
+                    <input type="radio" name="genero" value="Feminino"
+                        checked={formData.genero === "Feminino"} onChange={handleChange} />
+                    Feminino
+                </label>
+                <label>
+                    <input type="radio" name="genero" value="Outro"
+                        checked={formData.genero === "Outro"} onChange={handleChange} />
+                    Outro
+                </label>
+            </div>
+            {/* Checkbox */}
             <div>
                 <label>
-                    Email:
-                    <input type="email" name="email" value={formData.email}
+                    <input type="checkbox" name="aceitaTermos" checked={formData.aceitaTermos}
                         onChange={handleChange} />
+                    Aceito os termos e condições
                 </label>
-                {errors.email && <p style={{ color: "red" }}>{errors.email}</p>}{" "}
-                {/* Exibe erro se houver */}
             </div>
             <button type="submit">Enviar</button>
         </form>
